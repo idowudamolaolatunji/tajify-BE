@@ -9,7 +9,7 @@ dotenv.config({ path: './config.env' })
 const server = http.createServer(app);
 
 const DB = process.env.TAJIFY_DATABASE.replace('<PASSWORD>', process.env.TAJIFY_DATABASE_PASSWORD);
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 // Database connection
 mongoose.connect(DB)

@@ -19,8 +19,8 @@ app.use(morgan('dev'));
 
 // Routes Endpoints
 // Mounting our Endpoints (Middleware)
-// app.use('/api/users', userRouter);
-// app.use('/api/blogs', blogRouter);
+app.use('/api/users', userRouter);
+app.use('/api/blogs', blogRouter);
 // app.use('/api/wallets', walletRouter);
 
 module.exports = app;
