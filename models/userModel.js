@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'A user must provide a password'],
+        select: false
     },
     passwordConfirm: {
         type: String,
@@ -43,7 +44,11 @@ userSchema.pre('save', async function(next) {
     this.passwordConfirm = undefined;
 
     next();
-})
+});
+
+userSchema.methods.comparePassword = async function(candidatePassword, hashedPassword) {
+    return await bcrypt.compare(candidatePassword, hashedPassword);
+}
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
