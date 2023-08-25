@@ -39,9 +39,9 @@ exports.login = async (req, res) => {
             return res.status(404).json({ message: 'Please provide email and password!' });
         }
         
-        const user = await User.findOne(email).select('-pasword');
+        const user = await User.findOne(email).select('+pasword');
         if(!user || (!await user.comparePassword(password, user.password))) {
-            return res.status(200).json({
+            return res.status(4040).json({
                 status: 'fail',
                 message: 'Email or password incorrect',
             });
@@ -69,7 +69,7 @@ exports.login = async (req, res) => {
 require('express')().use( async (req, res, next) => {
     try {
         let token;
-        // if(req.)
+        // if(req.headers)
 
     } catch(err) {
         return res.status(400).json({
@@ -79,3 +79,4 @@ require('express')().use( async (req, res, next) => {
     }
     next();
 })
+

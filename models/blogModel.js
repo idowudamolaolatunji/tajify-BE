@@ -17,6 +17,12 @@ const blogSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    category: {
+        type: String,
+        enum: ['news', 'sport', 'travel', 'future', 'culture', 'health', 'style'],
+        default: 'news'
+    },
+    
     // You can add more fields like tags, category, comments, etc. as needed.
 });
 
