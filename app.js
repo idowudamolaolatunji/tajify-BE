@@ -17,7 +17,7 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 const corsOptions = {
-    origin: 'http://localhost:3000/',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'] 
 };
