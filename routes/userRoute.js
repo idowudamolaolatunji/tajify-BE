@@ -1,7 +1,4 @@
 const express = require('express');
-const { requestOTP, verifyUserOTP } = require("../controller/otpController");
-
-
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
@@ -12,9 +9,10 @@ router.post('/login', authController.login);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
 
-// OTP
-router.post("/verify", verifyUserOTP);
-router.post("/request", requestOTP);
+// // OTP
+// const { requestOTP, verifyUserOTP } = require("../controller/otpController");
+// router.post("/verify", verifyUserOTP);
+// router.post("/request", requestOTP);
 
 router.get("/getMe", authController.protected, userController.getMe);
 router.patch("/updateMe", authController.protected, userController.updateMe);

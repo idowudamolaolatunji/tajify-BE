@@ -10,31 +10,94 @@ const signToken = (id) => {
   });
 }
 
+const generateOtp = () => {
+    return Math.floor(1000 + Math.random() * 9000);
+};
+
+// const sendSignUpEmailToken = async (_, user, token) => {
+//     try {
+      
+//       // const verificationUrl = `${req.protocol}://${req.get('host')}/api/users/verify-email/${token}`;
+//       const verificationUrl = `https://clubmerce.com/api/users/verify-email/${token}`;
+//       // const firstName = user.fullName;
+//       // const message = `
+//       //   Please verify your email address\n
+//       //   Click ${verificationUrl} 
+//       //   \n to verify your email...`;
+//       const mailMessage = confirmEmailTemplate(user.fullName, verificationUrl);
+//       console.log(mailMessage);
+//       await sendEmail({
+//         user: user.email,
+//         subject: 'Verify Your Email Address',
+//         message: mailMessage
+//       });
+  
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   };
+
+/*
+exports.verifyUserOTP = async (req, res) => {
+    try {
+      const { email, otp } = req.body;
+      // Check if the OTP is valid
+      const otpRecord = await Otp.findOne({ otp });
+      if (!otpRecord) {
+        return res.status(400).send({ error: "Invalid OTP" });
+      }
+    
+      // Check if the OTP has expired (valid for only 2 minutes)
+      const otpCreatedTime = new Date(otpRecord.createdAt);
+      const otpExpiryTime = otpCreatedTime.setMinutes(otpCreatedTime.getMinutes() + 2);
+      if (Date.now() > otpExpiryTime) {
+        return res.status(400).send({ error: "OTP expired. Please request a new one." });
+      }
+  
+      const existingUser = await User.findOne({ email });
+      const token = await jwt.sign({ id: existingUser._id, email }, process.env.JWT_SECRET, {
+        expiresIn: '24h',
+      });
+      // make sure user is verified
+      await User.findByIdAndUpdate(existingUser._id,
+        { is_verified: true }, { useFindAndModify: false });
+
+      return res.status(201).json({
+        message: "Registration successful",
+        userToken: token,
+      })
+    } catch (err) {
+      console.log(err);
+      return res.status(400).send({ message: err });
+    }
+};
+
+*/
+
+
 exports.signup = async(req, res) => {
     try {
         const newUser = await User.create({
-            fullname: req.body.fullname,
+            username: req.body.username,
             email: req.body.email,
             password: req.body.password,
             passwordConfirm: req.body.passwordConfirm,
+            otp: generateOtp()
         });
-
-        const token = signToken(newBuyer._id);
 
         res.status(200).json({
             status: 'success',
-            message: 'Signed up successfully!',
+            message: "Success!.. OTP sent to email address. Valid for 10 minutes",
             data: {
                 user: newUser,
-                token
             }
-        })
+        });
 
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
             message: err.message
-        })
+        });
     }
 }
 
@@ -159,7 +222,7 @@ exports.isLoggedIn = async(req, res, next) => {
 
 
 // forgot password
-exports.forgotPassword = async (req, res, next) => {
+exports.forgotPassword = async (req, res) => {
     try {
         // 1) Get user based on POSTed email
         const user = await User.findOne({ email: req.body.email });
@@ -209,7 +272,7 @@ exports.forgotPassword = async (req, res, next) => {
   
   
 // reset password
-exports.resetPassword = async (req, res, next) => {
+exports.resetPassword = async (req, res) => {
     try {
         // get user based on token
         const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
