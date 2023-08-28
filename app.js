@@ -5,9 +5,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 
-const userRouter = require('./routes/userRoute');
-const blogRouter = require('./routes/blogRoute');
-const walletRouter = require('./routes/walletRoute');
+const userRouter = require('./routes/userRoute.js');
+const blogRouter = require('./routes/blogRoute.js');
+const walletRouter = require('./routes/walletRoute.js');
 
 const app = express();
 
