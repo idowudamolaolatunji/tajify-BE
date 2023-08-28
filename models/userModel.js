@@ -4,11 +4,6 @@ const bcrypt = require('bcrypt');
 const slugify = require('slugify');
 
 const userSchema = new mongoose.Schema({
-    fullname: {
-        type: String,
-        lowercase: true,
-        trim: true,
-    },
     username: {
         type: String,
         required: [true, 'A user must provide their fullname'],
@@ -25,7 +20,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'A user must provide a password'],
-        select: false
+        trim: true,
+        select: false,
     },
     passwordConfirm: {
         type: String,
@@ -40,9 +36,9 @@ const userSchema = new mongoose.Schema({
     },
     otp: {
         type: Number,
-        // select: false
+        select: false
     },
-    isVerifed: {
+    isOTPVerified: {
         type: Boolean,
         default: false
     },
@@ -60,13 +56,16 @@ const userSchema = new mongoose.Schema({
 // onSave pre hook
 const saltRounds = 12;
 userSchema.pre('save', async function(next) {
-    if(this.isModified('password')) return next();
+    if(!this.isModified('password')) return next();
 
     const hashedPassword = await bcrypt.hash(this.password, saltRounds);
     this.password = hashedPassword;
-
-    // delete the confirmpassword field (undefined is best in objects)
     this.passwordConfirm = undefined;
+    next();
+});
+userSchema.pre('save', function(next) {
+    const slug = slugify(this.username, { lower: true });
+    this.slug = `${slug}-${this._id}`;
     next();
 });
 userSchema.pre('save', async function(next) {
@@ -75,13 +74,10 @@ userSchema.pre('save', async function(next) {
     next();
 });
 userSchema.methods.comparePassword = async function(candidatePassword, hashedPassword) {
-    return await bcrypt.compare(candidatePassword, hashedPassword);
+    const encrypted = await bcrypt.compare(candidatePassword, hashedPassword);
+    return encrypted;
 }
-userSchema.pre('save', function(next) {
-    const slug = slugify(this.username, { lower: true });
-    this.slug = `${slug}-${this._id}`;
-    next();
-});
+
 userSchema.pre('save', function(next) {
     this.otpExpires = Date.now() + 5 * 60 * 1000;
     next();

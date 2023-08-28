@@ -1,11 +1,12 @@
 const { promisify } = require('util')
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const User = require('../models/userModel');
 
 const signToken = (id) => {
     // takes the user id(payload), secretkey, and an option(expiredin)
-  return jwt.sign({ id: id }, process.env.CLUBMERCE_JWT_SECRET_TOKEN, {
+  return jwt.sign({ id: id }, process.env.JWT_SECRET_TOKEN, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 }
@@ -59,7 +60,7 @@ exports.signup = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err.message
+            message: err.message || 'Something went wrong!'
         });
     }
 }
@@ -115,16 +116,19 @@ exports.login = async (req, res) => {
         if (!email || !password) {
             return res.status(404).json({ message: 'Please provide email and password!' });
         }
-        
-        const user = await User.findOne({ email }).select('+pasword');
-        if(!user || (!await user.comparePassword(password, user.password))) {
-            return res.status(404).json({
-                status: 'fail',
-                message: 'Email or password incorrect',
-            });
+        const user = await User.findOne({ email }).select('+password')
+        if (!user.email  || !(await user.comparePassword(password, user.password))) {
+            console.log('no correct')
+            res.json({message: 'Incorrect email or password '})
         }
-
+        if(!user?.active) {
+          res.json({ message: 'Account no longer active' });
+        }
         const token = signToken(user._id);
+        // if(!user.isOTPVerified) {
+        //     res.json({message: 'Email address not verified, Check your mail'})
+        //     // resend otp
+        //   }
         const cookieOptions = {
             expires: new Date(Date.now() + process.env.COOKIES_EXPIRES * 24 * 60 * 60 * 1000),
             httpOnly: true,
@@ -133,6 +137,7 @@ exports.login = async (req, res) => {
         res.cookie('jwt', token, cookieOptions);
         res.status(200).json({
             status: 'success',
+            message: 'Successfully Logged in!',
             data: {
                 user, 
                 token
@@ -142,7 +147,7 @@ exports.login = async (req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err.message
+            message: err.message || 'Something went wrong!'
         });
     }
 }
@@ -189,7 +194,7 @@ exports.protected = async (req, res, next) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err
+            message: err.message || 'Something went wrong!'
         });
     }
     next();
