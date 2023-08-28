@@ -82,7 +82,7 @@ exports.logout = (req, res) => {
 }
 
 
-exports.prodected = async (req, res, next) => {
+exports.protected = async (req, res, next) => {
     try {
         // 1) Getting token and check of it's there
         let token;  
