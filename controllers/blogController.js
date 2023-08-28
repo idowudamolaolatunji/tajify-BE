@@ -1,5 +1,6 @@
 
 const Blog = require('../models/blogModel');
+const User = require('../models/userModel');
 
 // Get all Blogs for all Users
 exports.getAllBlog = async(req, res) => {
@@ -25,7 +26,11 @@ exports.getAllBlog = async(req, res) => {
 exports.createBlog = async(req, res) => {
     try {
         const userId = req.user._id;
-        const newBlog = await Blog.create({ ...req.body, userId });
+        const user = User.findById(userId);
+        const newBlog = await Blog.create({ ...req.body, author: user.fullname, user: userId });
+        if (!user) {
+            return res.status(404).json({ message: 'user not found' });
+        }
         
         res.status(201).json({
             status: 'success',
@@ -39,10 +44,12 @@ exports.createBlog = async(req, res) => {
             status: 'fail',
             message: err || 'Something went wrong'
         });
+    }if (!vendor) {
+      return res.status(404).json({ error: 'Vendor not found' });
     }
 };
 
-// Get Blogs for User
+// Get Blogs catalog for User
 exports.getUserBlogs = async(req, res) => {
     try {
         const userId = req.user._id;
@@ -50,6 +57,7 @@ exports.getUserBlogs = async(req, res) => {
 
         res.status(200).json({
             status: 'success',
+            count: userBlogs.length,
             data: {
                 blogs: userBlogs
             }
@@ -69,8 +77,8 @@ exports.getBlogsByUserId = async(req, res) => {
         const userBlogs = await Blog.find(requestedUserId);
         res.status(200).json({
             status: 'success',
+            count: userBlogs.length,
             data: {
-                count: userBlogs.length,
                 blogs: userBlogs
             }
         })
@@ -83,6 +91,7 @@ exports.getBlogsByUserId = async(req, res) => {
     }
 }
 
+/*
 // Get single blog Posted By A User
 exports.getOneBlogByUserId = async(req, res) => {
     try {
@@ -105,6 +114,7 @@ exports.getOneBlogByUserId = async(req, res) => {
         })
     }
 }
+*/
 
 // Get a single Blog
 exports.getBlog = async(req, res) => {
@@ -124,6 +134,29 @@ exports.getBlog = async(req, res) => {
         });
     }
 };
+
+exports.getBlogByTag = async(req, res) => {
+    try {
+        const { category } = req.params;
+        const categorisedBlogs = Blog.find({ category });
+        if(!categorisedBlogs) {
+            return res.status(400).json({ message: 'No blog post in this category' });
+        }
+
+        return res.status(200).json({
+            status: 'success',
+            count: categorisedBlogs.length,
+            data: {
+                blogs: categorisedBlogs,
+            }
+        })
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong'
+        })
+    }
+}
 
 // Update Blog
 exports.updateBlog = async(req, res) => {

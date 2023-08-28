@@ -16,6 +16,14 @@ app.use(express.json());
 app.use(morgan('dev'));
 // app.use(cookieParser());
 
+const corsOptions = {
+    origin: 'http://localhost:3000/',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'] 
+};
+
+app.use(cors(corsOptions));
+  
 
 // Routes Endpoints
 // Mounting our Endpoints (Middleware)

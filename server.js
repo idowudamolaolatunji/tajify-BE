@@ -13,12 +13,13 @@ const PORT = process.env.PORT || 8080;
 
 // Database connection
 mongoose.connect(DB)
-.then(con => {
-    console.log('Database connected successfully!');
-})
-.catch(err => {
-    console.log(err)
-});
+    .then((con) => {
+        console.log('Database connected successfully!');
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+;
 
 // Listening to the server
 server.listen(PORT, () => {

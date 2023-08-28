@@ -17,6 +17,6 @@ router.route('/:id')
 
 router.get('/myBlogs', blogController.getUserBlogs);
 router.get('/:userId', blogController.getBlogsByUserId);
-router.get('/:userId/:id', blogController.getOneBlogByUserId);
+// router.get('/:userId/:id', blogController.getOneBlogByUserId);
 
 module.exports = router;
