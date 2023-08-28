@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const slugify = require('slugify');
 
 const userSchema = new mongoose.Schema({
     fullname: {
         type: String,
-        required: [true, 'A user must provide their fullname'],
         lowercase: true,
+        trim: true,
+    },
+    username: {
+        type: String,
+        required: [true, 'A user must provide their fullname'],
+        trim: true,
     },
     email: {
         type: String,
@@ -32,6 +38,7 @@ const userSchema = new mongoose.Schema({
             message: 'Password are not the same'
         }
     },
+    otp: Number,
     active: {
         type: Boolean,
         default: true,
