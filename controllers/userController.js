@@ -45,16 +45,6 @@ exports.createUser = (req, res) => {
     // return res.redirect('/signup')
 };
 
-const filterFunction = (obj, ...allowedFields) => {
-    const newObj = {};
-    Object.keys(obj).forEach(el => {
-        if(allowedFields.includes(el)) {
-            newObj[el] = obj[el]
-        }
-        return newObj;
-    })
-}
-
 exports.updateUser = async(req, res) => {
     try {
         const updatedUser = await User.findByIdAndUpate(req.params.id, req.body, {
@@ -89,5 +79,59 @@ exports.deleteUser = async(req, res) => {
             status: 'fail',
             message: err || 'Something went wrong'
         });
+    }
+};
+
+
+
+exports.getMe = (req, res, next) => {
+    // this middleware gives us access to the current user
+    req.params.id = req.user._id;
+    next();
+};
+
+// update current user data
+exports.updateMe = async (req, res) => {
+    try {
+        // create an error if user POST's password data.
+        if(req.body.password || req.body.passwordConfirm) {
+            return res.status(404).json({ message: 'This route is not for password updates. Please use /updateMyPassword.' });
+        }
+        // 2. update
+        const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                user: updatedUser
+            }
+        })
+    } catch(err) {
+        res.status(200).json({
+            status: "fail",
+            message: err.message || 'Something went wrong!'
+        })
+    }
+};
+
+// delete current user
+exports.deleteAccount = async(req, res, next) => {
+    try {
+        // get user
+        await User.findByIdAndUpdate(req.user._id, { active: false });
+
+        res.cookie('jwt', '', {
+            expires: new Date(Date.now() + 10 * 500),
+            httpOnly: true
+          }).clearCookie('jwt')
+        return res.status(204).json({
+            status: "success",
+            data: null
+        })
+    } catch(err) {
+    console.log(err)
     }
 };

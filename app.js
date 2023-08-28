@@ -21,8 +21,12 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'] 
 };
-
 app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+    console.log('Fecthing data...');
+    next();
+})
   
 
 // Routes Endpoints
