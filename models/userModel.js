@@ -38,7 +38,14 @@ const userSchema = new mongoose.Schema({
             message: 'Password are not the same'
         }
     },
-    otp: Number,
+    otp: {
+        type: Number,
+        // select: false
+    },
+    isVerifed: {
+        type: Boolean,
+        default: false
+    },
     active: {
         type: Boolean,
         default: true,
@@ -60,7 +67,6 @@ userSchema.pre('save', async function(next) {
 
     // delete the confirmpassword field (undefined is best in objects)
     this.passwordConfirm = undefined;
-
     next();
 });
 userSchema.pre('save', async function(next) {
@@ -72,10 +78,14 @@ userSchema.methods.comparePassword = async function(candidatePassword, hashedPas
     return await bcrypt.compare(candidatePassword, hashedPassword);
 }
 userSchema.pre('save', function(next) {
-    const slug = slugify(this.fullname, { lower: true, replacement: '-' });
+    const slug = slugify(this.username, { lower: true });
     this.slug = `${slug}-${this._id}`;
     next();
 });
+userSchema.pre('save', function(next) {
+    this.otpExpires = Date.now() + 5 * 60 * 1000;
+    next();
+})
 
 
 // Instance methods
@@ -84,7 +94,6 @@ userSchema.methods.changedPasswordAfter = async function(jtwTimeStamp) {
         const changePasswordTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
         return jtwTimeStamp > changePasswordTimeStamp;
     }
-
     return false;
 }
 
@@ -100,6 +109,13 @@ userSchema.methods.createPasswordResetToken = function() {
     this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
     return resetToken;
     // send the unencrypted version
+}
+
+userSchema.methods.isOTPExpired = function() {
+    if(this.otp && this.otpExpires) {
+        return Date.now() > this.otpExpires;
+    }
+    return false;
 }
 
 const User = mongoose.model('User', userSchema);
