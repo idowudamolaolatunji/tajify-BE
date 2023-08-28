@@ -37,43 +37,6 @@ const generateOtp = () => {
 //     }
 //   };
 
-/*
-exports.verifyUserOTP = async (req, res) => {
-    try {
-      const { email, otp } = req.body;
-      // Check if the OTP is valid
-      const otpRecord = await Otp.findOne({ otp });
-      if (!otpRecord) {
-        return res.status(400).send({ error: "Invalid OTP" });
-      }
-    
-      // Check if the OTP has expired (valid for only 2 minutes)
-      const otpCreatedTime = new Date(otpRecord.createdAt);
-      const otpExpiryTime = otpCreatedTime.setMinutes(otpCreatedTime.getMinutes() + 2);
-      if (Date.now() > otpExpiryTime) {
-        return res.status(400).send({ error: "OTP expired. Please request a new one." });
-      }
-  
-      const existingUser = await User.findOne({ email });
-      const token = await jwt.sign({ id: existingUser._id, email }, process.env.JWT_SECRET, {
-        expiresIn: '24h',
-      });
-      // make sure user is verified
-      await User.findByIdAndUpdate(existingUser._id,
-        { is_verified: true }, { useFindAndModify: false });
-
-      return res.status(201).json({
-        message: "Registration successful",
-        userToken: token,
-      })
-    } catch (err) {
-      console.log(err);
-      return res.status(400).send({ message: err });
-    }
-};
-
-*/
-
 
 exports.signup = async(req, res) => {
     try {
@@ -82,12 +45,12 @@ exports.signup = async(req, res) => {
             email: req.body.email,
             password: req.body.password,
             passwordConfirm: req.body.passwordConfirm,
-            otp: generateOtp()
+            otp: generateOtp(),
         });
 
         res.status(200).json({
             status: 'success',
-            message: "Success!.. OTP sent to email address. Valid for 10 minutes",
+            message: "Success!.. OTP sent to email address. Valid for 5 minutes",
             data: {
                 user: newUser,
             }
@@ -101,6 +64,51 @@ exports.signup = async(req, res) => {
     }
 }
 
+exports.requestOtp = async(req, res) => {
+    try {
+        const requestingUser = await User.find({ email: req.body.email }).select('+otp');
+        if(!requestingUser) return res.status(404).json({ message: 'You are not a valid user' });
+
+        await User.findByIdAndUpdate(otpOwner._id, { otp: generateOtp() }, { useFindAndModify: false });
+        
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.message || 'Something Went wrong',
+        });
+    }
+}
+
+exports.verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const otpOwner = await User.findOne({ email }).select('+otp');
+        if(otpOwner.otp !== otp) {
+            console.log('otp is different')
+            return res.status(400).json({ message: 'Wrong OTP' })
+        }
+
+        // Check if the OTP has expired (valid for only 5 minutes)
+        if (otpOwner.otp && isOTPExpired()) {
+            return res.status(400).json({ message: "OTP expired. Please request a new one." });
+        }
+
+        await User.findByIdAndUpdate(otpOwner._id, { isVerified: true }, { useFindAndModify: false });
+        //   otpOwner.isVerifed = true;
+        //   await otpOwner.save({ validateBeforeSave: false });
+
+        return res.status(200).json({
+            status: 'success',
+            message: "Registration successful! Login into Account.",
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.message || 'Something Went wrong',
+        });
+    }
+};
+
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -110,7 +118,7 @@ exports.login = async (req, res) => {
         
         const user = await User.findOne({ email }).select('+pasword');
         if(!user || (!await user.comparePassword(password, user.password))) {
-            return res.status(4040).json({
+            return res.status(404).json({
                 status: 'fail',
                 message: 'Email or password incorrect',
             });
