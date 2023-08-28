@@ -8,7 +8,7 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
-router.post("/requestOTP", authController.requestOtp);
+router.get("/requestOTP", authController.requestOtp);
 router.post("/verifyOTP", authController.verifyOtp);
 
 
