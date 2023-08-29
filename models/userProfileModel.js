@@ -5,6 +5,11 @@ const userProfileSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User',
     },
+    fullname: {
+        type: String,
+        lowercase: true,
+        trim: true,
+    },
     telephone: {
         type: Number,
     },

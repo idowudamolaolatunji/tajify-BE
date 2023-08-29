@@ -14,7 +14,7 @@ const app = express();
 // Middelwares
 app.use(express.json());
 app.use(morgan('dev'));
-// app.use(cookieParser());
+app.use(cookieParser());
 
 const corsOptions = {
     origin: 'http://localhost:3000',

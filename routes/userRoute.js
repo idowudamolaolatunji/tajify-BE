@@ -8,6 +8,8 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
+router.get("/requestOTP", authController.requestOtp);
+router.post("/verifyOTP", authController.verifyOtp);
 
 // // OTP
 // const { requestOTP, verifyUserOTP } = require("../controller/otpController");
