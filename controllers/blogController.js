@@ -135,28 +135,6 @@ exports.getBlog = async(req, res) => {
     }
 };
 
-exports.getBlogByTag = async(req, res) => {
-    try {
-        const { category } = req.params;
-        const categorisedBlogs = Blog.find({ category });
-        if(!categorisedBlogs) {
-            return res.status(400).json({ message: 'No blog post in this category' });
-        }
-
-        return res.status(200).json({
-            status: 'success',
-            count: categorisedBlogs.length,
-            data: {
-                blogs: categorisedBlogs,
-            }
-        })
-    } catch(err) {
-        return res.status(400).json({
-            status: 'fail',
-            message: err || 'Something went wrong'
-        })
-    }
-}
 
 // Update Blog
 exports.updateBlog = async(req, res) => {
@@ -195,3 +173,231 @@ exports.deleteBlog = async(req, res) => {
         })
     }
 };
+
+// get blogs by tags
+exports.getBlogsByTags = async(req, res) => {
+    try {
+        const { tags } = req.params;
+        const categorisedBlogs = Blog.find({ tags });
+        if(!categorisedBlogs) {
+            return res.status(400).json({ message: 'No blog post in this category' });
+        }
+
+        return res.status(200).json({
+            status: 'success',
+            count: categorisedBlogs.length,
+            data: {
+                blogs: categorisedBlogs,
+            }
+        })
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong'
+        })
+    }
+}
+
+
+// Get Blogs by Category
+exports.getBlogsByCategory = async (req, res) => {
+    try {
+        const { category } = req.params;
+        const categorizedBlogs = await Blog.find({ category });
+        
+        res.status(200).json({
+            status: 'success',
+            count: categorizedBlogs.length,
+            data: {
+                blogs: categorizedBlogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+
+// Get Blogs by Most Liked
+exports.getBlogsByMostLiked = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort('-likes');
+        
+        res.status(200).json({
+            status: 'success',
+            count: blogs.length,
+            data: {
+                blogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+
+// Get Blogs by Most Viewed
+exports.getBlogsByMostViewed = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort('-views');
+        
+        res.status(200).json({
+            status: 'success',
+            count: blogs.length,
+            data: {
+                blogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+
+// Get Blogs by Most Shared
+exports.getBlogsByMostShared = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort('-shares');
+        
+        res.status(200).json({
+            status: 'success',
+            count: blogs.length,
+            data: {
+                blogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+
+exports.getBlogsByMostEngaging = async (req, res) => {
+    try {
+        const allBlogs = await Blog.find();
+        
+        // Simulate an algorithm that ranks blogs based on engagement factors
+        const rankedBlogs = allBlogs.map(blog => {
+            const engagementScore = calculateEngagementScore(blog);
+            // return { ...blog._doc, engagementScore };
+            console.log(...blog._doc, engagementScore)
+        });
+        // Sort blogs by engagement score in descending order
+        rankedBlogs.sort((a, b) => b.engagementScore - a.engagementScore);
+
+        // // Limit the response to a specific number (e.g., 30) of blogs
+        // const responseBlogs = rankedBlogs.slice(0, 30);
+
+        res.status(200).json({
+            status: 'success',
+            count: rankedBlogs.length,
+            data: {
+                blogs: rankedBlogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+
+// Calculate an engagement score for a blog (for simulation purposes)
+function calculateEngagementScore(blog) {
+    // Emulate a scoring mechanism based on likes, comments, shares, etc.
+    const likesScore = blog.likes * 5;
+    const commentsScore = blog.comments * 3;
+    const sharesScore = blog.shares * 2;
+
+    return likesScore + commentsScore + sharesScore;
+}
+
+
+
+// const page = req.query.page || 1; // Get the page number from the request query
+// const limit = 30; // Number of documents per page
+// const skip = (page - 1) * limit;
+// const blogs = await Blog.find().sort('-shares').skip(skip).limit(limit);
+
+/*
+// Get Blogs by Most Engaging
+exports.getBlogsByMostEngaging = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort('-engagement').limit(30);
+        
+        res.status(200).json({
+            status: 'success',
+            count: blogs.length,
+            data: {
+                blogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+*/
+
+
+
+
+
+
+
+
+/*
+// Hashtag algorithm for later
+const Blog = require('../models/blogModel');
+
+// Get Blogs by Hashtag (Emulating Modern Social Media Hashtags Algorithm)
+exports.getBlogsByHashtag = async (req, res) => {
+    try {
+        const { hashtag } = req.params;
+        const allBlogs = await Blog.find();
+        
+        // Simulate an algorithm that ranks blogs based on relevance to the hashtag
+        const rankedBlogs = allBlogs.map(blog => {
+            const relevance = calculateRelevance(blog, hashtag);
+            return { ...blog._doc, relevance };
+        });
+
+        // Sort blogs by relevance in descending order
+        rankedBlogs.sort((a, b) => b.relevance - a.relevance);
+        
+        res.status(200).json({
+            status: 'success',
+            count: rankedBlogs.length,
+            data: {
+                blogs: rankedBlogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+
+// Calculate relevance of a blog to a hashtag (for simulation purposes)
+function calculateRelevance(blog, hashtag) {
+    // Emulate a scoring mechanism based on hashtag presence in title, content, etc.
+    const titleRelevance = blog.title.includes(hashtag) ? 10 : 0;
+    const contentRelevance = blog.content.includes(hashtag) ? 5 : 0;
+    const tagRelevance = blog.tags.includes(hashtag) ? 3 : 0;
+    
+    return titleRelevance + contentRelevance + tagRelevance;
+}
+*/

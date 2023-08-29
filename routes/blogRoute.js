@@ -18,4 +18,16 @@ router.route('/:id')
 router.get('/myBlogs', blogController.getUserBlogs);
 router.get('/:userSlug/:userId', blogController.getBlogsByUserId);
 
+router.get('/:tags', blogController.getBlogsByTags);
+router.get('/:category', blogController.getBlogsByCategory);
+router.get('/most-liked', blogController.getBlogsByMostLiked);
+router.get('/most-viewed', blogController.getBlogsByMostViewed);
+router.get('/most-shared', blogController.getBlogsByMostShared);
+
+// router.get('/most-engaging', blogController.getBlogsByMostEngaging);
+// router.get('/myBlogs', blogController.getBlogsByHashtag);
+
+
+
+
 module.exports = router;
