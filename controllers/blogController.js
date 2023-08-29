@@ -280,6 +280,7 @@ exports.getBlogsByMostShared = async (req, res) => {
     }
 };
 
+// get most engaging post
 exports.getBlogsByMostEngaging = async (req, res) => {
     try {
         const allBlogs = await Blog.find();
@@ -290,7 +291,6 @@ exports.getBlogsByMostEngaging = async (req, res) => {
             // return { ...blog._doc, engagementScore };
             console.log(...blog._doc, engagementScore)
         });
-        // Sort blogs by engagement score in descending order
         rankedBlogs.sort((a, b) => b.engagementScore - a.engagementScore);
 
         // // Limit the response to a specific number (e.g., 30) of blogs
@@ -311,15 +311,57 @@ exports.getBlogsByMostEngaging = async (req, res) => {
     }
 };
 
-// Calculate an engagement score for a blog (for simulation purposes)
-function calculateEngagementScore(blog) {
-    // Emulate a scoring mechanism based on likes, comments, shares, etc.
-    const likesScore = blog.likes * 5;
-    const commentsScore = blog.comments * 3;
-    const sharesScore = blog.shares * 2;
+// function calculateEngagementScore(blog) {
+//     // Emulate a scoring mechanism based on likes, comments, shares, etc.
+//     const likesScore = blog.likes * 5;
+//     const commentsScore = blog.comments * 3;
+//     const sharesScore = blog.shares * 2;
 
-    return likesScore + commentsScore + sharesScore;
+//     return likesScore + commentsScore + sharesScore;
+// }
+function calculateEngagementScore(blog) {
+    // Calculate the score for different engagement factors
+    // This means that * have a higher impact on the engagement score compared to other factors.
+    const likesScore = blog.likes * 3;
+    const commentsScore = blog.comments * 2;
+    const sharesScore = blog.shares * 4;
+    const viewsScore = blog.views;
+
+    return likesScore + commentsScore + sharesScore + viewsScore;
 }
+
+// trending blogs
+exports.getTrendingPosts = async (req, res) => {
+    try {
+        const allBlogs = await Blog.find();
+
+        // Simulate an algorithm to determine trending posts
+        const trendingBlogs = allBlogs.filter(blog => isTrending(blog));
+
+        res.status(200).json({
+            status: 'success',
+            count: trendingBlogs.length,
+            data: {
+                blogs: trendingBlogs,
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err || 'Something went wrong',
+        });
+    }
+};
+
+// Check if a blog is trending (for simulation purposes)
+function isTrending(blog) {
+    // Emulate a check based on recent engagement activity, e.g., last 24 hours
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now - (24 * 60 * 60 * 1000));
+
+    return blog.createdAt > twentyFourHoursAgo;
+}
+
 
 
 
