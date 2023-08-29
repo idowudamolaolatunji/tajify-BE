@@ -25,7 +25,7 @@ router.get('/most-viewed', blogController.getBlogsByMostViewed);
 router.get('/most-shared', blogController.getBlogsByMostShared);
 
 // router.get('/most-engaging', blogController.getBlogsByMostEngaging);
-// router.get('/myBlogs', blogController.getBlogsByHashtag);
+// router.get('/trending', blogController.getTrendingPosts);
 
 
 

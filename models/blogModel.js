@@ -71,9 +71,18 @@ blogSchema.pre('save', function(next) {
     next();
 })
 
+blogSchema.methods.calculateEngagementScore = function() {
+    return (this.likes * 3) + (this.comments * 2) + (this.shares * 5) + (this.view * 3);
+};
+
+blogSchema.methods.isTrending = function() {
+    const now = new Date();
+    const fourtyEightHoursAgo = new Date(now - (48 * 60 * 60 * 1000));
+    const engagementThreshold = 100;
+
+    return this.createdAt > fourtyEightHoursAgo && this.calculateEngagementScore() > engagementThreshold;
+};
+
 
 const Blog = mongoose.model('Blog', blogSchema)
 module.exports = Blog;
-
-
-// filtercategory = | tag | #hashtag | most viewed | most shared | mostengaging

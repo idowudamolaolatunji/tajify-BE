@@ -287,7 +287,7 @@ exports.getBlogsByMostEngaging = async (req, res) => {
         
         // Simulate an algorithm that ranks blogs based on engagement factors
         const rankedBlogs = allBlogs.map(blog => {
-            const engagementScore = calculateEngagementScore(blog);
+            const engagementScore = blog.calculateEngagementScore(blog);
             // return { ...blog._doc, engagementScore };
             console.log(...blog._doc, engagementScore)
         });
@@ -311,32 +311,13 @@ exports.getBlogsByMostEngaging = async (req, res) => {
     }
 };
 
-// function calculateEngagementScore(blog) {
-//     // Emulate a scoring mechanism based on likes, comments, shares, etc.
-//     const likesScore = blog.likes * 5;
-//     const commentsScore = blog.comments * 3;
-//     const sharesScore = blog.shares * 2;
-
-//     return likesScore + commentsScore + sharesScore;
-// }
-function calculateEngagementScore(blog) {
-    // Calculate the score for different engagement factors
-    // This means that * have a higher impact on the engagement score compared to other factors.
-    const likesScore = blog.likes * 3;
-    const commentsScore = blog.comments * 2;
-    const sharesScore = blog.shares * 4;
-    const viewsScore = blog.views;
-
-    return likesScore + commentsScore + sharesScore + viewsScore;
-}
-
 // trending blogs
 exports.getTrendingPosts = async (req, res) => {
     try {
         const allBlogs = await Blog.find();
 
         // Simulate an algorithm to determine trending posts
-        const trendingBlogs = allBlogs.filter(blog => isTrending(blog));
+        const trendingBlogs = allBlogs.filter(blog => blog.isTrending(blog));
 
         res.status(200).json({
             status: 'success',
@@ -353,15 +334,6 @@ exports.getTrendingPosts = async (req, res) => {
     }
 };
 
-// Check if a blog is trending (for simulation purposes)
-function isTrending(blog) {
-    // Emulate a check based on recent engagement activity, e.g., last 24 hours
-    const now = new Date();
-    const twentyFourHoursAgo = new Date(now - (24 * 60 * 60 * 1000));
-
-    return blog.createdAt > twentyFourHoursAgo;
-}
-
 
 
 
@@ -369,32 +341,6 @@ function isTrending(blog) {
 // const limit = 30; // Number of documents per page
 // const skip = (page - 1) * limit;
 // const blogs = await Blog.find().sort('-shares').skip(skip).limit(limit);
-
-/*
-// Get Blogs by Most Engaging
-exports.getBlogsByMostEngaging = async (req, res) => {
-    try {
-        const blogs = await Blog.find().sort('-engagement').limit(30);
-        
-        res.status(200).json({
-            status: 'success',
-            count: blogs.length,
-            data: {
-                blogs,
-            }
-        });
-    } catch (err) {
-        return res.status(400).json({
-            status: 'fail',
-            message: err || 'Something went wrong',
-        });
-    }
-};
-*/
-
-
-
-
 
 
 
