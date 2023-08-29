@@ -25,13 +25,14 @@ exports.getAllBlog = async(req, res) => {
 // Create User Blog
 exports.createBlog = async(req, res) => {
     try {
-        // const userId = req.user._id;
-        // const user = User.findById(userId);
-        // const newBlog = await Blog.create({ ...req.body, author: user.fullname, user: userId });
-        // if (!user) {
-        //     return res.status(404).json({ message: 'user not found' });
-        // }
-        const newBlog = await Blog.create(req.body);
+        // const creatorId = req.user._id;
+        const creatorId = req.body.creator;
+        const creator = User.findById(creatorId);
+        const newBlog = await Blog.create({ ...req.body, author: creator.username, creator: creatorId });
+        if (!creator) {
+            return res.status(404).json({ message: 'user not found' });
+        }
+        // const newBlog = await Blog.create(req.body);
         
         res.status(201).json({
             status: 'success',
@@ -43,10 +44,8 @@ exports.createBlog = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong'
+            message: err.message || 'Something went wrong'
         });
-    }if (!vendor) {
-      return res.status(404).json({ error: 'Vendor not found' });
     }
 };
 
@@ -54,7 +53,7 @@ exports.createBlog = async(req, res) => {
 exports.getUserBlogs = async(req, res) => {
     try {
         const userId = req.user._id;
-        const userBlogs = await Blog.find({ user: userId });
+        const userBlogs = await Blog.find({ creator: userId });
 
         res.status(200).json({
             status: 'success',
@@ -72,15 +71,16 @@ exports.getUserBlogs = async(req, res) => {
 };
 
 // Get Blogs Posted By A User
-exports.getBlogsbyCreatorId = async(req, res) => {
+exports.getBlogsbyCreatorSlug = async(req, res) => {
     try {
-        const requestedCreatorId = req.params.CreatorId;
-        const userBlogs = await Blog.find(requestedCreatorId);
+        const requestedCreatorSlug = req.params.creatorSlug;
+        const creatorId = await User.findOne({ slug: requestedCreatorSlug });
+        const creatorBlogs = await Blog.find({ creator: creatorId });
         res.status(200).json({
             status: 'success',
-            count: userBlogs.length,
+            count: creatorBlogs.length,
             data: {
-                blogs: userBlogs
+                blogs: creatorBlogs
             }
         })
 
@@ -94,10 +94,11 @@ exports.getBlogsbyCreatorId = async(req, res) => {
 
 
 // Get single blog Posted By A User
-exports.getOneBlogbyCreatorId = async(req, res) => {
+exports.getOneBlogbyCreatorSlug = async(req, res) => {
     try {
-        const requestedCreatorId = req.params.CreatorId;
-        const creatorBlogs = await Blog.find(requestedCreatorId);
+        const requestedCreatorSlug = req.params.creatorSlug;
+        const creatorId = await User.findOne({ slug: requestedCreatorSlug });
+        const creatorBlogs = await Blog.find({ creator: creatorId });
         // const blog = creatorBlogs.filter(blog => blog._id === req.params.blogId);
         const blog = creatorBlogs.find(req.params.blogId)
         res.status(200).json({

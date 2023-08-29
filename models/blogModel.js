@@ -8,19 +8,19 @@ const blogSchema = new mongoose.Schema({
         trim: true
     },
     content: {
-        type: String,
+        type: mongoose.SchemaTypes.Mixed,
         required: [true, 'provide your blog content'],
         trim: true
     },
     creator: {
-        // type: mongoose.SchemaTypes.ObjectId,
-        // ref: 'User',
-        type: String
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'User',
     },
     date: {
         type: Date,
         default: Date.now,
     },
+    author: String,
     // likes: {
     //     type: Number,
     //     default: 0
@@ -64,8 +64,10 @@ const blogSchema = new mongoose.Schema({
         type: Boolean,
         default: function() {
             if(this.type === 'open') {
-                return true
-            } else false
+                return true;
+            } else {
+                return false;
+            }
         }
     },
     subscriptionFee: {
@@ -78,7 +80,13 @@ const blogSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-
+blogSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: "creator",
+        select: '_id username'
+    })
+    next();
+})
 blogSchema.pre('save', function(next) {
     const slug = slugify(this.title, {lower: true, replacement: '-'});
     this.slug = `${slug}-${this._id}`;
