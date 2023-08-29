@@ -8,9 +8,11 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassword/:token", authController.resetPassword);
-router.post("/requestOTP", authController.requestOtp);
-router.post("/verifyOTP", authController.verifyOtp);
 
+// // OTP
+// const { requestOTP, verifyUserOTP } = require("../controller/otpController");
+// router.post("/verify", verifyUserOTP);
+// router.post("/request", requestOTP);i
 
 router.get("/getMe", authController.protected, userController.getMe);
 router.patch("/updateMe", authController.protected, userController.updateMe);
