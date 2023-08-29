@@ -12,29 +12,39 @@ const blogSchema = new mongoose.Schema({
         required: [true, 'provide your blog content'],
         trim: true
     },
-    user: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'User',
-    },
-    author: {
-        type: String,
+    creator: {
+        // type: mongoose.SchemaTypes.ObjectId,
+        // ref: 'User',
+        type: String
     },
     date: {
         type: Date,
         default: Date.now,
     },
-    likes: {
-        type: Number,
-        default: 0
-    },
-    share: {
-        type: Number,
-        default: 0
-    },
-    // comment,
-    // saved,
-    // gifts,
-    // views,
+    // likes: {
+    //     type: Number,
+    //     default: 0
+    // },
+    // share: {
+    //     type: Number,
+    //     default: 0
+    // },
+    // comment: {
+    //     type: Number,
+    //     default: 0
+    // },
+    // saved: {
+    //     type: Number,
+    //     default: 0
+    // },
+    // gifts: {
+    //     type: Number,
+    //     default: 0
+    // },
+    // views: {
+    //     type: Number,
+    //     default: 0
+    // },
     tags: [String],
     category: {
         type: String,
@@ -52,7 +62,11 @@ const blogSchema = new mongoose.Schema({
     },
     isFree: {
         type: Boolean,
-        default: null
+        default: function() {
+            if(this.type === 'open') {
+                return true
+            } else false
+        }
     },
     subscriptionFee: {
         type: Number,
@@ -60,8 +74,8 @@ const blogSchema = new mongoose.Schema({
     },
     slug: String,
     blogUrl: String,
-    
-    // You can add more fields like tags, category, comments, etc. as needed.
+}, {
+    timestamps: true,
 });
 
 

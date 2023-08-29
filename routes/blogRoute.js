@@ -16,7 +16,8 @@ router.route('/:id')
 ;
 
 router.get('/myBlogs', blogController.getUserBlogs);
-router.get('/:userSlug/:userId', blogController.getBlogsByUserId);
+router.get('/:Creatorslug', blogController.getBlogsbyCreatorId);
+router.get('/:Creatorslug/:blogId', blogController.getBlogsbyCreatorId);
 
 router.get('/:tags', blogController.getBlogsByTags);
 router.get('/:category', blogController.getBlogsByCategory);

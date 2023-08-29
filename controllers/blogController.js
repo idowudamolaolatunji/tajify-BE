@@ -25,12 +25,13 @@ exports.getAllBlog = async(req, res) => {
 // Create User Blog
 exports.createBlog = async(req, res) => {
     try {
-        const userId = req.user._id;
-        const user = User.findById(userId);
-        const newBlog = await Blog.create({ ...req.body, author: user.fullname, user: userId });
-        if (!user) {
-            return res.status(404).json({ message: 'user not found' });
-        }
+        // const userId = req.user._id;
+        // const user = User.findById(userId);
+        // const newBlog = await Blog.create({ ...req.body, author: user.fullname, user: userId });
+        // if (!user) {
+        //     return res.status(404).json({ message: 'user not found' });
+        // }
+        const newBlog = await Blog.create(req.body);
         
         res.status(201).json({
             status: 'success',
@@ -71,10 +72,10 @@ exports.getUserBlogs = async(req, res) => {
 };
 
 // Get Blogs Posted By A User
-exports.getBlogsByUserId = async(req, res) => {
+exports.getBlogsbyCreatorId = async(req, res) => {
     try {
-        const requestedUserId = req.params.userId;
-        const userBlogs = await Blog.find(requestedUserId);
+        const requestedCreatorId = req.params.CreatorId;
+        const userBlogs = await Blog.find(requestedCreatorId);
         res.status(200).json({
             status: 'success',
             count: userBlogs.length,
@@ -91,18 +92,17 @@ exports.getBlogsByUserId = async(req, res) => {
     }
 }
 
-/*
+
 // Get single blog Posted By A User
-exports.getOneBlogByUserId = async(req, res) => {
+exports.getOneBlogbyCreatorId = async(req, res) => {
     try {
-        const requestedUserId = req.params.userId;
-        const userBlogs = await Blog.find(requestedUserId);
-        // const blog = userBlogs.map(el => el._id === req.params.id);
-        const blog = userBlogs.find(req.params.id)
+        const requestedCreatorId = req.params.CreatorId;
+        const creatorBlogs = await Blog.find(requestedCreatorId);
+        // const blog = creatorBlogs.filter(blog => blog._id === req.params.blogId);
+        const blog = creatorBlogs.find(req.params.blogId)
         res.status(200).json({
             status: 'success',
             data: {
-                // ...blog
                 blog
             }
         });
@@ -114,7 +114,7 @@ exports.getOneBlogByUserId = async(req, res) => {
         })
     }
 }
-*/
+
 
 // Get a single Blog
 exports.getBlog = async(req, res) => {
