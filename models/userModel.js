@@ -47,8 +47,11 @@ const userSchema = new mongoose.Schema({
     active: {
         type: Boolean,
         default: true,
+        select: false
     },
     slug: String,
+    referralUrl: String,
+    profileUrl: String,
     signedUpAt: {
         type: Date,
         default: Date.now
@@ -75,11 +78,11 @@ userSchema.pre('save', async function(next) {
     this.passwordChangedAt = Date.now() - 100;
     next();
 });
-userSchema.methods.comparePassword = async function(candidatePassword, hashedPassword) {
-    const encrypted = await bcrypt.compare(candidatePassword, hashedPassword);
-    return encrypted;
-}
-
+userSchema.pre('save', function(next) {
+    this.referalUrl = `refer/${this.username}-${crypto.randomUUID()}`
+    this.profileUrl = `profile/${this.slug}`
+    next();
+})
 userSchema.pre('save', function(next) {
     this.otpExpires = Date.now() + 5 * 60 * 1000;
     next();
@@ -94,7 +97,10 @@ userSchema.methods.changedPasswordAfter = async function(jtwTimeStamp) {
     }
     return false;
 }
-
+userSchema.methods.comparePassword = async function(candidatePassword, hashedPassword) {
+    const encrypted = await bcrypt.compare(candidatePassword, hashedPassword);
+    return encrypted;
+}
 userSchema.methods.createPasswordResetToken = function() {
     // create random bytes token
     const resetToken = crypto.randomBytes(32).toString('hex');

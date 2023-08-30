@@ -33,6 +33,26 @@ exports.createComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
     try {
         const commentId = req.params.commentId;
+        const updatedComment = await Comment.findOneAndUpdate({ _id: commentId , user: req.user._id }, req.body, {
+            new: true,
+            runValidation: true,
+        });
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Comment deleted successfully',
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.message || 'Something went wrong',
+        });
+    }
+};
+
+exports.deleteComment = async (req, res) => {
+    try {
+        const commentId = req.params.commentId;
         await Comment.findOneAndDelete({
             _id: commentId,
             user: req.user._id,
