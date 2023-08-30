@@ -50,7 +50,7 @@ exports.createBlog = async(req, res) => {
 };
 
 // Get Blogs catalog for User
-exports.getUserBlogs = async(req, res) => {
+exports.getMyBlogs = async(req, res) => {
     try {
         const userId = req.user._id;
         const userBlogs = await Blog.find({ creator: userId });

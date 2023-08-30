@@ -15,7 +15,7 @@ router.route('/:id')
     .delete(blogController.deleteBlog)
 ;
 
-router.get('/myBlogs', blogController.getUserBlogs);
+router.get('/myBlogs', blogController.getMyBlogs);
 router.get('/:Creatorslug', blogController.getBlogsbyCreatorSlug);
 router.get('/:Creatorslug/:blogId', blogController.getOneBlogbyCreatorSlug);
 
