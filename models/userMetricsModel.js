@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const userMetricsSchema = new mongoose.Schema({
     user: {
-        type: mongoose.SchemaTypes.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User'
     },
     followers: [{ type: mongoose.Schema.Types.ObjectId }],
@@ -23,6 +23,14 @@ const userMetricsSchema = new mongoose.Schema({
         default: 0
     },
 });
+
+userMetricsSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'user',
+        select: '-__v'
+    })
+    next();
+})
 
 const UserMetrics = mongoose.model('UserMetrics', userMetricsSchema);
 module.exports = UserMetrics;

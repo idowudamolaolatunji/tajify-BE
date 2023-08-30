@@ -27,7 +27,7 @@ const userProfileSchema = new mongoose.Schema({
         type: [String],
     },
     interest: {
-        type: [Strings]
+        type: [String]
     },
     jobTitle: {
         type: String,
@@ -45,6 +45,14 @@ const userProfileSchema = new mongoose.Schema({
         default: Date.now()
     }
 });
+
+userProfileSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'user',
+        select: '-__v'
+    });
+    next();
+})
 
 const UserProfile = mongoose.model('UserProfile', userProfileSchema);
 

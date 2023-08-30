@@ -240,11 +240,6 @@ exports.isLoggedIn = async(req, res, next) => {
 }
 
 
-// forgetten password 
-// reset password
-// loggedin change password
-
-
 // forgot password
 exports.forgotPassword = async (req, res) => {
     try {
@@ -332,5 +327,3 @@ exports.resetPassword = async (req, res) => {
         })
     }
 }
-  
-
