@@ -50,6 +50,17 @@ exports.signup = async(req, res) => {
             otp: generateOtp(),
         });
 
+        if(req.params.recruitingUserId) {
+            const { recruitingUserId } = req.params;
+            if(!recruitingUserId) return;
+
+            await User.findByIdAndUpdate(
+                recruitingUserId,
+                { $push: { invites: newUser._id } },
+                { new: true }
+            );
+        }
+
         res.status(200).json({
             status: 'success',
             message: "Success!.. OTP sent to email address. Valid for 5 minutes",
@@ -229,11 +240,6 @@ exports.isLoggedIn = async(req, res, next) => {
 }
 
 
-// forgetten password 
-// reset password
-// loggedin change password
-
-
 // forgot password
 exports.forgotPassword = async (req, res) => {
     try {
@@ -321,5 +327,3 @@ exports.resetPassword = async (req, res) => {
         })
     }
 }
-  
-
