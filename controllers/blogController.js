@@ -25,14 +25,12 @@ exports.getAllBlog = async(req, res) => {
 // Create User Blog
 exports.createBlog = async(req, res) => {
     try {
-        // const creatorId = req.user._id;
-        const creatorId = req.body.creator;
+        const creatorId = req.user._id;
         const creator = User.findById(creatorId);
-        const newBlog = await Blog.create({ ...req.body, author: creator.username, creator: creatorId });
         if (!creator) {
-            return res.status(404).json({ message: 'user not found' });
+            return res.status(404).json({ message: 'User not found' });
         }
-        // const newBlog = await Blog.create(req.body);
+        const newBlog = await Blog.create({ ...req.body, author: creator.username, creator: creatorId });
         
         res.status(201).json({
             status: 'success',
