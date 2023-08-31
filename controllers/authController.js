@@ -146,7 +146,7 @@ exports.login = async (req, res) => {
             secure: true
         }
         res.cookie('jwt', token, cookieOptions);
-        res.status(200).json({
+        return res.status(200).json({
             status: 'success',
             message: 'Successfully Logged in!',
             data: {
