@@ -90,11 +90,12 @@ userSchema.pre('save', function(next) {
 
 
 // Instance methods
-userSchema.methods.changedPasswordAfter = async function(jtwTimeStamp) {
+userSchema.methods.changedPasswordAfter = function (jwtTimeStamp) {
     if(this.passwordChangedAt) {
-        const changePasswordTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
-        return jtwTimeStamp > changePasswordTimeStamp;
+        const changeTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        return jwtTimeStamp < changeTimeStamp;
     }
+    // return false means not changed
     return false;
 }
 userSchema.methods.comparePassword = async function(candidatePassword, hashedPassword) {

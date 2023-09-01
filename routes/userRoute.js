@@ -16,10 +16,10 @@ router.get("/requestOTP", authController.requestOtp);
 router.post("/verifyOTP", authController.verifyOtp);
 
 
-router.get("/getMe", authController.protected, userController.getMe);
-router.delete("/deleteAccount", authController.protected, userController.deleteAccount);
+router.get("/getMe", authController.protect, userController.getMe);
+router.delete("/deleteAccount", authController.protect, userController.deleteAccount);
 
-router.patch("/updateMyProflie", authController.protected, userProfileController.updateMyProfile);
+router.patch("/updateMyProflie", authController.protect, userProfileController.updateMyProfile);
 
 router.route('/')
     .get(userController.getAllUsers)
