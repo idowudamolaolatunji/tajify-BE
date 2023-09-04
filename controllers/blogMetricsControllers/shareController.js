@@ -1,7 +1,5 @@
 
 // Create share
-// const Share = require('../models/shareModel');
-
 exports.sharePost = async (req, res) => {
     try {
         const { blogId } = req.body;
