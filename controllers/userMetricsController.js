@@ -1,10 +1,11 @@
 const UserMetrics = require('../models/userMetricsModel');
+const User = require('../models/userModel');
 
 
 // Send a follow request
 exports.sendFollowRequest = async (req, res) => {
     try {
-        const currentUser = await UserMetrics.findById(req.user._id);
+        const currentUser = await UserMetrics.findOne({ user: req.user._id });
         const userToFollow = await UserMetrics.findById(req.params.id);
 
         if (!currentUser.followerRequestsSent.includes(userToFollow._id)) {
@@ -31,7 +32,7 @@ exports.sendFollowRequest = async (req, res) => {
 // Accept a follow request
 exports.acceptFollowRequest = async (req, res) => {
     try {
-        const currentUser = await UserMetrics.findById(req.user._id);
+        const currentUser = await UserMetrics.findOne({ user: req.user._id });
         const userToAccept = await UserMetrics.findById(req.params.id);
 
         if (currentUser.followerRequestsReceived.includes(userToAccept._id)) {
@@ -65,7 +66,7 @@ exports.acceptFollowRequest = async (req, res) => {
 // Reject a follow request
 exports.rejectFollowRequest = async (req, res) => {
     try {
-        const currentUser = await UserMetrics.findById(req.user._id);
+        const currentUser = await UserMetrics.findOne({ user: req.user._id });
         const userToReject = await UserMetrics.findById(req.params.id);
     
         if (currentUser.followerRequestsReceived.includes(userToReject._id)) {
@@ -91,7 +92,7 @@ exports.rejectFollowRequest = async (req, res) => {
 // Unfollow a user
 exports.unFollowUser = async (req, res) => {
     try {
-        const currentUser = await UserMetrics.findById(req.user._id);
+        const currentUser = await UserMetrics.findOne({ user: req.user._id });
         const userToUnfollow = await UserMetrics.findById(req.params.id);
   
         if (currentUser.following.includes(userToUnfollow._id)) {
