@@ -10,11 +10,10 @@ exports.sendFollowRequest = async (req, res) => {
 
         if (!currentUser.followerRequestsSent.includes(userToFollow._id)) {
             userToFollow.followerRequestsReceived.push(currentUser._id);
-            await userToFollow.save();
+            await userToFollow.save({ validateBeforeSave: false });
 
-            // Update the sender's followerRequestsSent
             currentUser.followerRequestsSent.push(userToFollow._id);
-            await currentUser.save();
+            await currentUser.save({ validateBeforeSave: false });
 
             res.status(200).json({ message: 'Follow request sent successfully' });
         } else {
@@ -38,17 +37,16 @@ exports.acceptFollowRequest = async (req, res) => {
         if (currentUser.followerRequestsReceived.includes(userToAccept._id)) {
             // Update following for the current user
             currentUser.following.push(userToAccept._id);
-            await currentUser.save();
+            await currentUser.save({ validateBeforeSave: false });
 
-            // Update followers for the user being followed
             userToAccept.followers.push(currentUser._id);
-            await userToAccept.save();
+            await userToAccept.save({ validateBeforeSave: false });
 
             // Remove from receiver's followerRequestsReceived and sender's followerRequestsSent
             currentUser.followerRequestsReceived.pull(userToAccept._id);
             userToAccept.followerRequestsSent.pull(currentUser._id);
-            await currentUser.save();
-            await userToAccept.save();
+            await currentUser.save({ validateBeforeSave: false });
+            await userToAccept.save({ validateBeforeSave: false });
 
             res.status(200).json({ message: 'Follow request accepted' });
         } else {
@@ -73,8 +71,8 @@ exports.rejectFollowRequest = async (req, res) => {
             currentUser.followerRequestsReceived.pull(userToReject);
             userToReject.followerRequestsSent.pull(currentUser);
   
-            await currentUser.save();
-            await userToReject.save();
+            await currentUser.save({ validateBeforeSave: false });
+            await userToReject.save({ validateBeforeSave: false });
     
             res.status(200).json({ message: 'Follow request rejected' });
         } else {
@@ -99,8 +97,8 @@ exports.unFollowUser = async (req, res) => {
             currentUser.following.pull(userToUnfollow._id);
             userToUnfollow.followers.pull(currentUser._id);
     
-            await currentUser.save();
-            await userToUnfollow.save();
+            await currentUser.save({ validateBeforeSave: false });
+            await userToUnfollow.save({ validateBeforeSave: false });
     
             res.status(200).json({ message: 'Unfollowed successfully' });
         } else {
@@ -121,7 +119,7 @@ exports.referralInvites = async (req, res) => {
         const { referralUrl } = req.params;
         const recruitingUser = User.findOne({ referralUrl });
         if(!recruitingUser) {
-            return res.status(404).json({ message: 'user with this invite id no longer exist'});
+            res.status(404).json({ message: 'user with this invite id no longer exist'});
         }
         // Redirect to Tajify homepage
         res.redirect('https://www.tajify.com/');
@@ -130,6 +128,9 @@ exports.referralInvites = async (req, res) => {
             // Redirect to signup page after 2 minute
             res.redirect(`https://www.tajify.com/signup/${recruitingUser._id}`);
         }, 120000);
+
+        await UserMetrics.findOneAndUpdate({ user: recruitingUser._id }, { $inc: { referalsCount } }, { new: true } );
+
     } catch(err) {
         res.status(400).json({
             status: 'fail',
