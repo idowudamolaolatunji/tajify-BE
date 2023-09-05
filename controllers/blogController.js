@@ -17,7 +17,7 @@ exports.getAllBlog = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.mesage || 'Something went wrong',
         });
     }
 };
@@ -60,7 +60,7 @@ exports.getMyBlogs = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong'
+            message: err.mesage || 'Something went wrong'
         });
     }
 };
@@ -82,7 +82,7 @@ exports.getBlogsbyCreatorSlug = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong'
+            message: err.mesage || 'Something went wrong'
         })
     }
 }
@@ -106,7 +106,7 @@ exports.getOneBlogbyCreatorSlug = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong'
+            message: err.mesage || 'Something went wrong'
         })
     }
 }
@@ -126,7 +126,7 @@ exports.getBlog = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong'
+            message: err.mesage || 'Something went wrong'
         });
     }
 };
@@ -149,7 +149,7 @@ exports.updateBlog = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'something went wrong'
+            message: err.mesage || 'something went wrong'
         });
     }
 };
@@ -165,7 +165,7 @@ exports.deleteBlog = async(req, res) => {
     } catch(err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong'
+            message: err.mesage || 'Something went wrong'
         })
     }
 };
@@ -198,8 +198,9 @@ exports.getBlogsByTags = async(req, res) => {
 // Get Blogs by Category
 exports.getBlogsByCategory = async (req, res) => {
     try {
-        const { category } = req.params;
-        const categorizedBlogs = await Blog.find({ category });
+        const categoryString = req.params.category;
+        const categorizedBlogs = await Blog.find({ category: categoryString });
+        if(!categorizedBlogs) return res.status(404).json({ message: 'No blog post in this category' });
         
         res.status(200).json({
             status: 'success',
@@ -211,7 +212,7 @@ exports.getBlogsByCategory = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.message || 'Something went wrong',
         });
     }
 };
@@ -231,7 +232,7 @@ exports.getBlogsByMostLiked = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.mesage || 'Something went wrong',
         });
     }
 };
@@ -251,7 +252,7 @@ exports.getBlogsByMostViewed = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.mesage || 'Something went wrong',
         });
     }
 };
@@ -271,7 +272,7 @@ exports.getBlogsByMostShared = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.mesage || 'Something went wrong',
         });
     }
 };
@@ -302,7 +303,7 @@ exports.getBlogsByMostEngaging = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.mesage || 'Something went wrong',
         });
     }
 };
@@ -325,7 +326,7 @@ exports.getTrendingPosts = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.mesage || 'Something went wrong',
         });
     }
 };
@@ -370,7 +371,7 @@ exports.getBlogsByHashtag = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             status: 'fail',
-            message: err || 'Something went wrong',
+            message: err.mesage || 'Something went wrong',
         });
     }
 };

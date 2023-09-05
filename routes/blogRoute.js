@@ -22,12 +22,13 @@ router.route('/:id')
     .delete(blogController.deleteBlog)
 ;
 
-router.get('/myBlogs', blogController.getMyBlogs);
+router.get('/category/:category', blogController.getBlogsByCategory);
+
+router.get('/myBlogs', authController.protect, blogController.getMyBlogs);
 router.get('/:Creatorslug', blogController.getBlogsbyCreatorSlug);
 router.get('/:Creatorslug/:blogId', blogController.getOneBlogbyCreatorSlug);
 
 router.get('/:tags', blogController.getBlogsByTags);
-router.get('/:category', blogController.getBlogsByCategory);
 router.get('/most-liked', blogController.getBlogsByMostLiked);
 router.get('/most-viewed', blogController.getBlogsByMostViewed);
 router.get('/most-shared', blogController.getBlogsByMostShared);
