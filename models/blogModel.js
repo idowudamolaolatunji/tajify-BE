@@ -21,35 +21,11 @@ const blogSchema = new mongoose.Schema({
         default: Date.now,
     },
     author: String,
-    // likes: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // share: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // comment: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // saved: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // gifts: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // views: {
-    //     type: Number,
-    //     default: 0
-    // },
     tags: [String],
     category: {
         type: String,
-        // enum: ['entertainment', 'sport', 'lifestyle', 'growth', 'finance', 'health', 'technology'],
-        // default: 'entertainment'
+        enum: ['entertainment', 'sport', 'lifestyle', 'growth', 'finance', 'health', 'technology'],
+        default: 'entertainment'
     },
     type: {
         type: String,
