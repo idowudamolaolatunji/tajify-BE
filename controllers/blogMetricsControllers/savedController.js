@@ -1,8 +1,3 @@
-
-
-
-// const Saved = require('../models/savedModel');
-
 exports.savePost = async (req, res) => {
     try {
         const { blogId } = req.body;
@@ -26,9 +21,6 @@ exports.savePost = async (req, res) => {
 };
 
 
-
-// controllers/unsaveController.js
-const Saved = require('../models/savedModel');
 
 exports.unsavePost = async (req, res) => {
     try {

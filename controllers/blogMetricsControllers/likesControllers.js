@@ -1,9 +1,8 @@
 
-// const Like = require('../models/likeModel');
 // Create likes
 exports.likePost = async (req, res) => {
     try {
-        const { blogId } = req.body;
+        const { blogId } = req.params;
         const newLike = await Like.create({
             user: req.user._id,
             blog: blogId,
@@ -24,11 +23,10 @@ exports.likePost = async (req, res) => {
 };
 
 
-// const Unlike = require('../models/unlikeModel');
 
 exports.unlikePost = async (req, res) => {
     try {
-        const { blogId } = req.body;
+        const { blogId } = req.params;
         await Unlike.findOneAndDelete({
             user: req.user._id,
             blog: blogId,

@@ -1,6 +1,3 @@
-// controllers/viewController.js
-const View = require('../models/viewModel');
-
 exports.recordView = async (req, res) => {
     try {
         const { blogId } = req.body;

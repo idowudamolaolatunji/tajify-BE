@@ -1,9 +1,4 @@
 
-
-
-// const Gift = require('../models/giftModel');
-
-
 exports.sendGift = async (req, res) => {
     try {
         const { type, recipientId } = req.body;
