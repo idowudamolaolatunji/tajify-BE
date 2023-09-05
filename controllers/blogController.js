@@ -199,6 +199,7 @@ exports.getBlogsByTags = async(req, res) => {
 exports.getBlogsByCategory = async (req, res) => {
     try {
         const categoryString = req.params.category;
+        if(!categoryString) return res.json({ message: 'No categoty selcted' })
         const categorizedBlogs = await Blog.find({ category: categoryString });
         if(!categorizedBlogs) return res.status(404).json({ message: 'No blog post in this category' });
         
@@ -285,7 +286,7 @@ exports.getBlogsByMostEngaging = async (req, res) => {
         // Simulate an algorithm that ranks blogs based on engagement factors
         const rankedBlogs = allBlogs.map(blog => {
             const engagementScore = blog.calculateEngagementScore(blog);
-            // return { ...blog._doc, engagementScore };
+            return { ...blog._doc, engagementScore };
             console.log(...blog._doc, engagementScore)
         });
         rankedBlogs.sort((a, b) => b.engagementScore - a.engagementScore);
@@ -338,9 +339,6 @@ exports.getTrendingPosts = async (req, res) => {
 // const limit = 30; // Number of documents per page
 // const skip = (page - 1) * limit;
 // const blogs = await Blog.find().sort('-shares').skip(skip).limit(limit);
-
-
-
 
 /*
 // Hashtag algorithm for later

@@ -52,7 +52,30 @@ const userSchema = new mongoose.Schema({
     slug: String,
     referralUrl: String,
     profileUrl: String,
-    signedUpAt: {
+    
+    followers: [{ type: mongoose.Schema.Types.ObjectId }],
+    following: [{ type: mongoose.Schema.Types.ObjectId }],
+    followerRequestsSent: [{ type: mongoose.Schema.Types.ObjectId }],
+    followerRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId }],
+    invites: [{ type: mongoose.Schema.Types.ObjectId }],
+    totalPosts: {
+        type: Number,
+        default: 0
+    },
+    totalLikes: {
+        type: Number,
+        default: 0
+    },
+    totalEarnings: {
+        type: Number,
+        default: 0
+    },
+    referalsCount: {
+        type: Number,
+        default: 0,
+    },
+
+    createdAt: {
         type: Date,
         default: Date.now
     }

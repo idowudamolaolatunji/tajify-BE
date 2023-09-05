@@ -3,6 +3,7 @@ const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const userProfileController = require('../controllers/userProfileController');
 const userMetricsController = require('../controllers/userMetricsController');
+// const { requestOTP, verifyUserOTP } = require("../controller/otpController");
 
 const router = express.Router();
 
@@ -16,7 +17,6 @@ router.get("/requestOTP", authController.requestOtp);
 router.post("/verifyOTP", authController.verifyOtp);
 
 // // OTP
-// const { requestOTP, verifyUserOTP } = require("../controller/otpController");
 // router.post("/verify", verifyUserOTP);
 // router.post("/request", requestOTP);i
 
