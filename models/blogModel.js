@@ -48,8 +48,8 @@ const blogSchema = new mongoose.Schema({
     tags: [String],
     category: {
         type: String,
-        enum: ['news', 'sport', 'travel', 'future', 'culture', 'health', 'style'],
-        default: 'news'
+        enum: ['entertainment', 'sport', 'lifestyle', 'growth', 'finance', 'health', 'technology'],
+        default: 'entertainment'
     },
     type: {
         type: String,

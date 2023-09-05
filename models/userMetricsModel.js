@@ -22,6 +22,10 @@ const userMetricsSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    referalsCount: {
+        type: Number,
+        default: 0,
+    }
 });
 
 userMetricsSchema.pre(/^find/, function(next) {
