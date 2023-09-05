@@ -1,4 +1,3 @@
-// controllers/viewController.js
 exports.recordView = async (req, res) => {
     try {
         const { blogId } = req.body;
