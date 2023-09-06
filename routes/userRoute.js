@@ -2,7 +2,6 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const userProfileController = require('../controllers/userProfileController');
-const userMetricsController = require('../controllers/userMetricsController');
 // const { requestOTP, verifyUserOTP } = require("../controller/otpController");
 
 const router = express.Router();
@@ -37,12 +36,12 @@ router.route('/:slug')
 ;
 
 
-router.post('/:id/request-follow', userMetricsController.sendFollowRequest);
-router.post('/accept-follow/:id', userMetricsController.acceptFollowRequest);
-router.post('/reject-follow/:id', userMetricsController.rejectFollowRequest);
-router.post('/:id/unfollow', userMetricsController.unFollowUser);
+router.post('/:id/request-follow', userController.sendFollowRequest);
+router.post('/accept-follow/:id', userController.acceptFollowRequest);
+router.post('/reject-follow/:id', userController.rejectFollowRequest);
+router.post('/:id/unfollow', userController.unFollowUser);
 
 
-router.get('/:referralUrl', userMetricsController.referralInvites);
+router.get('/:referralUrl', userController.referralInvites);
 
 module.exports = router;

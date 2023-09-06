@@ -44,78 +44,12 @@ exports.createBlog = async(req, res) => {
     }
 };
 
-// Get Blogs catalog for User
-exports.getMyBlogs = async(req, res) => {
-    try {
-        const userId = req.user.id;
-        const userBlogs = await Blog.find({ creator: userId });
-
-        res.status(200).json({
-            status: 'success',
-            count: userBlogs.length,
-            data: {
-                blogs: userBlogs
-            }
-        });
-    } catch(err) {
-        return res.status(400).json({
-            status: 'fail',
-            message: err.mesage || 'Something went wrong'
-        });
-    }
-};
-
-// Get Blogs Posted By A User
-exports.getBlogsbyCreatorSlug = async(req, res) => {
-    try {
-        const requestedCreatorSlug = req.params.creatorSlug;
-        const creatorId = await User.findOne({ slug: requestedCreatorSlug });
-        const creatorBlogs = await Blog.find({ creator: creatorId });
-        res.status(200).json({
-            status: 'success',
-            count: creatorBlogs.length,
-            data: {
-                blogs: creatorBlogs
-            }
-        })
-
-    } catch(err) {
-        return res.status(400).json({
-            status: 'fail',
-            message: err.mesage || 'Something went wrong'
-        })
-    }
-}
-
-
-// Get single blog Posted By A User
-exports.getOneBlogbyCreatorSlug = async(req, res) => {
-    try {
-        const requestedCreatorSlug = req.params.creatorSlug;
-        const creatorId = await User.findOne({ slug: requestedCreatorSlug });
-        const creatorBlogs = await Blog.find({ creator: creatorId });
-        // const blog = creatorBlogs.filter(blog => blog._id === req.params.blogId);
-        const blog = creatorBlogs.find(req.params.blogId)
-        res.status(200).json({
-            status: 'success',
-            data: {
-                blog
-            }
-        });
-
-    } catch(err) {
-        return res.status(400).json({
-            status: 'fail',
-            message: err.mesage || 'Something went wrong'
-        })
-    }
-}
-
 
 // Get a single Blog
 exports.getBlog = async(req, res) => {
     try {
-        const blog = await Blog.findById(req.params.id);
+        const blogSlug = req.params.slug
+        const blog = await Blog.findOne({ slug: blogSlug });
         res.status(200).json({
             status: 'success',
             data: {
@@ -169,6 +103,106 @@ exports.deleteBlog = async(req, res) => {
         })
     }
 };
+
+
+// trending blogs
+exports.getTrendingPosts = async (req, res) => {
+    try {
+        console.log(req, res)
+        // const allBlogs = await Blog.find();
+        // console.log(allBlogs)
+
+        // // Simulate an algorithm to determine trending posts
+        // const trendingBlogs = allBlogs.filter(blog => blog.isTrending(blog));
+        // console.log(trendingBlogs)
+
+        // res.status(200).json({
+        //     status: 'success',
+        //     count: trendingBlogs.length,
+        //     data: {
+        //         blogs: trendingBlogs,
+        //     }
+        // });
+    } catch (err) {
+        console.log(err)
+        // return res.status(400).json({
+        //     status: 'fail',
+        //     message: err.mesage || 'Something went wrong',
+        // });
+    }
+};
+
+
+// Get Blogs catalog for User
+exports.getMyBlogs = async(req, res) => {
+    try {
+        const userId = req.user.id;
+        const userBlogs = await Blog.find({ creator: userId });
+
+        res.status(200).json({
+            status: 'success',
+            count: userBlogs.length,
+            data: {
+                blogs: userBlogs
+            }
+        });
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.mesage || 'Something went wrong'
+        });
+    }
+};
+
+// Get Blogs Posted By A User
+exports.getBlogsbyCreatorSlug = async(req, res) => {
+    try {
+        const requestedCreatorSlug = req.params.creatorSlug;
+        console.log(requestedCreatorSlug)
+        const creator = await User.findOne({ slug: requestedCreatorSlug });
+        const creatorBlogs = await Blog.find({ creator });
+        res.status(200).json({
+            status: 'success',
+            count: creatorBlogs.length,
+            data: {
+                blogs: creatorBlogs
+            }
+        })
+
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.mesage || 'Something went wrong'
+        })
+    }
+}
+
+
+// Get single blog Posted By A User
+exports.getOneBlogbyCreatorSlug = async(req, res) => {
+    try {
+        const requestedCreatorSlug = req.params.creatorSlug;
+        const creatorId = await User.findOne({ slug: requestedCreatorSlug });
+        const creatorBlogs = await Blog.find({ creator: creatorId });
+        // const blog = creatorBlogs.filter(blog => blog._id === req.params.blogId);
+        const blog = creatorBlogs.find(req.params.blogId)
+        res.status(200).json({
+            status: 'success',
+            data: {
+                blog
+            }
+        });
+
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.mesage || 'Something went wrong'
+        })
+    }
+}
+
+
+
 
 // get blogs by tags
 exports.getBlogsByTags = async(req, res) => {
@@ -309,28 +343,7 @@ exports.getBlogsByMostEngaging = async (req, res) => {
     }
 };
 
-// trending blogs
-exports.getTrendingPosts = async (req, res) => {
-    try {
-        const allBlogs = await Blog.find();
 
-        // Simulate an algorithm to determine trending posts
-        const trendingBlogs = allBlogs.filter(blog => blog.isTrending(blog));
-
-        res.status(200).json({
-            status: 'success',
-            count: trendingBlogs.length,
-            data: {
-                blogs: trendingBlogs,
-            }
-        });
-    } catch (err) {
-        return res.status(400).json({
-            status: 'fail',
-            message: err.mesage || 'Something went wrong',
-        });
-    }
-};
 
 
 
