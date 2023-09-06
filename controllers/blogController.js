@@ -173,8 +173,8 @@ exports.deleteBlog = async(req, res) => {
 // get blogs by tags
 exports.getBlogsByTags = async(req, res) => {
     try {
-        const { tags } = req.params;
-        const categorisedBlogs = Blog.find({ tags });
+        const tagsString = req.params.tags;
+        const categorisedBlogs = Blog.find({ tags: tagsString });
         if(!categorisedBlogs) {
             return res.status(400).json({ message: 'No blog post in this category' });
         }
